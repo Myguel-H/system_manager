@@ -2,7 +2,6 @@
 session_start();
 require_once 'config.php';
 
-//requisição ao db
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $action = $_POST['action'] ?? '';
 
@@ -14,12 +13,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
-        //verifica se user esta vazio e senha no db
         if($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['user_type'] = $user['type'];
-            header('Location: estaok.php');
+            header('Location: /pages/dashboard.php');
             exit();
         } else {
             header('Location: index.php?error=1');
@@ -35,7 +33,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
             $stmt = $pdo->prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
             $stmt->execute([$name, $email, $hashedPassword]);
-            header('Location: estaok.php?registered=1');
+            header('Location: index.php?registered=1');
             exit(); 
         } catch(PDOException $e) {
             header('Location: register.php?error=1');
